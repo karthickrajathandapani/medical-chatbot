@@ -1,0 +1,23 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Model caches
+.cache/
+*.pt
+
+# OS
+.DS_Store
+
+# Data (PDFs can be large — keep out of git, ship separately)
+data/*.pdf
+
+# Logs
+*.log
+data/ingest_cache.pkl

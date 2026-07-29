@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedInquire — Grounded Medical Reference</title>
+
+<!-- Type system: serif for editorial/encyclopedia voice, sans for UI, mono for telemetry -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">℞</span>
+      <div class="brand-text">
+        <h1>MedInquire</h1>
+        <p>Grounded medical reference</p>
+      </div>
+    </div>
+
+    <button class="new-chat-btn" id="newChatBtn">
+      <span>+</span> New conversation
+    </button>
+
+    <div class="sidebar-section">
+      <h2 class="sidebar-label">Retrieval pipeline</h2>
+      <ul class="pipeline-list">
+        <li><span class="dot dot-teal"></span> Hybrid search <em>(dense + BM25)</em></li>
+        <li><span class="dot dot-amber"></span> Cross-encoder rerank</li>
+        <li><span class="dot dot-teal"></span> PubMedBERT embeddings</li>
+        <li><span class="dot dot-amber"></span> GPT-4o-mini synthesis</li>
+      </ul>
+    </div>
+
+    <div class="sidebar-section source-note">
+      <h2 class="sidebar-label">Source corpus</h2>
+      <p>Answers are grounded strictly in the ingested medical reference text. Every claim is page-cited.</p>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="disclaimer">
+        <strong>⚕ Not medical advice.</strong>
+        For informational purposes only. Consult a licensed clinician for diagnosis or treatment.
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN CHAT PANEL ============ -->
+  <main class="chat-panel">
+
+    <div class="chat-scroll" id="chatScroll">
+      <div class="welcome-card">
+        <h2>What would you like to look up?</h2>
+        <p>Ask about a condition, symptom, or treatment. Answers are retrieved and re-ranked from the source medical text, not invented.</p>
+        <div class="suggestion-row">
+          <button class="suggestion-chip" data-q="What are the common symptoms of hypertension?">Symptoms of hypertension</button>
+          <button class="suggestion-chip" data-q="How is Type 2 diabetes typically managed?">Managing Type 2 diabetes</button>
+          <button class="suggestion-chip" data-q="What causes migraines?">Causes of migraines</button>
+        </div>
+      </div>
+
+      <div id="messages"></div>
+    </div>
+
+    <!-- Composer -->
+    <form class="composer" id="composerForm">
+      <textarea
+        id="messageInput"
+        rows="1"
+        placeholder="Ask a medical question…"
+        autocomplete="off"
+      ></textarea>
+      <button type="submit" class="send-btn" id="sendBtn" aria-label="Send">
+        <svg class="pulse-icon" viewBox="0 0 24 24" width="20" height="20" fill="none">
+          <path d="M2 12h4l2 6 4-14 3 10h7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </form>
+    <p class="composer-hint">MedInquire cites its sources but can make mistakes. Verify anything critical with a professional.</p>
+  </main>
+
+</div>
+
+<!-- Message + telemetry template (cloned by JS) -->
+<template id="assistantTemplate">
+  <div class="message assistant">
+    <div class="avatar">℞</div>
+    <div class="bubble-col">
+      <div class="report-card">
+        <div class="report-text"></div>
+      </div>
+      <div class="vitals-strip" hidden>
+        <span class="vitals-item" data-key="retrieve">retrieve <b>–</b>ms</span>
+        <span class="vitals-item" data-key="rerank">rerank <b>–</b>ms</span>
+        <span class="vitals-item" data-key="score">top score <b>–</b></span>
+        <span class="vitals-item" data-key="generation">generate <b>–</b>ms</span>
+      </div>
+      <div class="sources-row" hidden></div>
+    </div>
+  </div>
+</template>
+
+<template id="userTemplate">
+  <div class="message user">
+    <div class="user-bubble"></div>
+  </div>
+</template>
+
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+</html>
